@@ -18,9 +18,8 @@ class TaxCalculatorTest extends ServiceTestCase
      */
     protected $taxCalculator;
 
-    public static function setUpBeforeClass(): void
+    public static function loadMocksBeforeSetup()
     {
-        static::boot();
         Application::getInstance()->getContainer()->getDefinition(ApiBinConnection::class)
             ->setClass(MockApiBinConnection::class);
         Application::getInstance()->getContainer()->getDefinition(ApiRatesConnection::class)
@@ -29,7 +28,7 @@ class TaxCalculatorTest extends ServiceTestCase
             ->setArgument('$config', ['filename' => '%app_root%var/test_storage/bin.storage', 'prefix' => 'bin_data']);
         Application::getInstance()->getContainer()->getDefinition('exchange_rates_provider.key_value.storage')
             ->setArgument('$config', ['filename' => '%app_root%var/test_storage/exr.storage', 'prefix' => 'rates']);
-        Application::getInstance()->start();
+
     }
 
     protected function setUp(): void

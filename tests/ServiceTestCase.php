@@ -11,6 +11,10 @@ class ServiceTestCase extends TestCase
 {
     protected static $container;
 
+    public static function loadMocksBeforeSetup() {
+
+    }
+
     public static function boot()
     {
         Application::getInstance()->boot();
@@ -30,8 +34,8 @@ class ServiceTestCase extends TestCase
     public static function setUpBeforeClass(): void
     {
         static::boot();
+        static::loadMocksBeforeSetup();
         Application::getInstance()->start();
-
     }
 
     public static function tearDownAfterClass(): void
