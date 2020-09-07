@@ -20,9 +20,8 @@ class BinCountryDataProviderTest extends ServiceTestCase
     public static function loadMocksBeforeSetup()
     {
         $filename = static::getParam('app_root') . 'var/test_storage/bin_data.storage';
-        Application::getInstance()->getContainer()->getDefinition(ApiBinConnection::class)
-            ->setClass(MockApiBinConnection::class);
-        Application::getInstance()->getContainer()->getDefinition('bin_provider.key_value.storage')
+        static::getDefinition(ApiBinConnection::class)->setClass(MockApiBinConnection::class);
+        static::getDefinition('bin_provider.key_value.storage')
             ->setArgument('$config', ['filename' => $filename, 'prefix' => 'bin_data']);
         if (\file_exists($filename)) {
             \unlink($filename);
