@@ -49,6 +49,11 @@ class ServiceTestCase extends TestCase
         return static::$container->get($name);
     }
 
+    public static function getDefinition($name)
+    {
+        return static::$container->getDefinition($name);
+    }
+
     public function getParameter($name)
     {
         return static::$container->getParameter($name);

@@ -5,8 +5,8 @@ namespace App\Taxes\DataProvider;
 use App\Net\ApiRatesConnection;
 use App\Storage\Exception\KeyValueStorageException;
 use App\Storage\KeyValueInterface;
-use App\Taxes\Exception\ExchangeRatesMissingException;
-use App\Taxes\Exception\ExchangeRatesNotFoundException;
+use App\Taxes\Exception\ExchangeRatesMissingDataProviderException;
+use App\Taxes\Exception\ExchangeRatesNotFoundDataProviderException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 
@@ -45,14 +45,11 @@ class ExchangeRatesDataProvider
     protected function key(array $symbols = []): array
     {
         $keys = [];
-        if ($symbols === []) {
-            $keys[] = 'rates' . \date('Y-m-d') . '|';
-        }
         foreach ($symbols as $symbol) {
             if (!is_string($symbol)) {
                 throw new \RuntimeException('Symbol should be a string, ' . gettype($symbol) . ' given');
             }
-            $keys[] = 'rates' . \date('Y-m-d') . '|' . $symbol;
+            $keys[] = \date('Y-m-d') . '|' . $symbol;
         }
 
         return $keys;
@@ -83,7 +80,7 @@ class ExchangeRatesDataProvider
         try {
             $apiRatesData = $this->connection->getLatestRates($notCachedSymbols);
         } catch (GuzzleException $e) {
-            throw new ExhcnageRatesNotFoundException(
+            throw new ExchangeRatesNotFoundDataProviderException(
                 'Exchange rates api not provided data for rates: "' . join(',', $notCachedSymbols) . '"',
                 $code = 503,
                 $e
@@ -93,11 +90,11 @@ class ExchangeRatesDataProvider
             || ($missedRate = \array_diff($notCachedSymbols, \array_keys($apiRatesData['rates']))) !== [];
         if ($badRatesResponse) {
             if (isset($missedRate)) {
-                throw new ExchangeRatesMissingException(
+                throw new ExchangeRatesMissingDataProviderException(
                     'Exchange rates not found in api, symbols are: ' . \implode(',', $missedRate)
                 );
             }
-            throw new ExchangeRatesNotFoundException('API response does not contain rates');
+            throw new ExchangeRatesNotFoundDataProviderException('API response does not contain rates');
         }
         $ratesData = \array_combine(
             $this->key(\array_keys($apiRatesData['rates'])),

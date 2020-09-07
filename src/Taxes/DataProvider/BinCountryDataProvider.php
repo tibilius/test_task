@@ -40,16 +40,23 @@ class BinCountryDataProvider
         $this->logger = $logger;
     }
 
-
+    /**
+     * @param array $bin
+     * @return array
+     * @throws BinNumberNotNumericException
+     * @throws BinNumberTooShortException
+     */
     public function getCountry(array $bin): array
     {
-        $binMap = \array_combine($bin, \array_map([$this, 'binForCountry'], $bin));// original bin => truncatedBin
+        /// create map original bin => truncated bin
+        $binMap = \array_combine($bin, \array_map([$this, 'binForCountry'], $bin));
         $binForCountry = \array_unique(\array_values($binMap));
+        /// function return array with original bin: [original bin => country]
         $cacheToResult = function ($data) use ($binMap) {
             $result = [];
             foreach ($binMap as $bin => $key) {
-                if ($data = ($data[$key] ?? null)) {
-                    $result[$bin] = $data;
+                if ($country = ($data[$key] ?? null)) {
+                    $result[$bin] = $country;
                 }
             }
 
@@ -92,22 +99,16 @@ class BinCountryDataProvider
         return $cacheToResult($binCountry + $cachedBinsData);
     }
 
-    protected function validateBin(string $bin): string
-    {
-        if (!\ctype_digit(trim($bin))) {
-            throw new BinNumberNotNumericException($bin);
-        }
-
-        return $bin;
-    }
-
     protected function binForCountry(string $bin): string
     {
         if (\strlen($bin) < static::BIN_LENGTH_FOR_COUNTRY) {
             throw new BinNumberTooShortException($bin);
         }
+        if (!\ctype_digit($bin)) {
+            throw new BinNumberNotNumericException($bin);
+        }
 
-        return \substr($bin, 0, static::BIN_LENGTH_FOR_COUNTRY);
+        return \substr(\str_replace(' ', '', $bin), 0, static::BIN_LENGTH_FOR_COUNTRY);
     }
 
 }

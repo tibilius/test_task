@@ -41,6 +41,9 @@ class TaxCalculatorTest extends ServiceTestCase
     {
         $testTransaction = new Transaction();
         $testTransaction->setAmount(50.0)->setBin('45717360')->setCurrency('USD');
-        $this->assertEquals(0.01000816466073, $this->taxCalculator->calculate($testTransaction));
+        /**
+         * Mock exchange rates near 1k
+         */
+        $this->assertEquals(0.0005004082330365111, $this->taxCalculator->calculate($testTransaction));
     }
 }

@@ -12,6 +12,7 @@ $app->start();
 $taxCalculator = $app->getContainer()->get(\App\Taxes\TaxCalculator::class);
 $filename = $argv[1];
 if (!\file_exists($filename)) {
+    print 'Input file not found';
     return;
 }
 $file =  new \SplFileObject($filename);
