@@ -1,0 +1,71 @@
+parameters:
+  app_root: ~
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: '../src/*'
+    exclude:
+      - '../src/{Application.php, CompilerPass}'
+      - '../src/Storage/KeyValueClient'
+
+  App\Taxes\Interceptors\:
+    resource: '../src/Taxes/Interceptors'
+    tags: ['taxes.interceptor']
+
+  monolog:
+    class: 'Monolog\Logger'
+    factory: [ 'App\SimpleLoggerFactory', 'createFileLogger' ]
+    arguments:
+      $path: '%app_root%var/logs/main.log'
+
+  Psr\Log\LoggerInterface: "@monolog"
+
+  bin_provider.key_value.storage:
+    class: 'App\Storage\KeyValueClient\JsonFileKeyValueStorage'
+    factory: [ 'App\Storage\Factory\KeyValueStorageStaticFactory', 'create' ]
+    arguments:
+      $className: 'App\Storage\KeyValueClient\JsonFileKeyValueStorage'
+      $config:
+        filename: '%app_root%var/storage/bin.storage'
+        prefix: 'bin_data'
+
+  exchange_rates_provider.key_value.storage:
+    class: 'App\Storage\KeyValueClient\JsonFileKeyValueStorage'
+    factory: [ 'App\Storage\Factory\KeyValueStorageStaticFactory', 'create' ]
+    arguments:
+      $className: 'App\Storage\KeyValueClient\JsonFileKeyValueStorage'
+      $config:
+        filename: '%app_root%var/storage/exchange_rates.storage'
+        prefix: 'exchange_rates'
+
+  App\Net\ApiBinConnection:
+    arguments:
+      $config:
+        base_uri: 'https://lookup.binlist.net/'
+        headers:
+          Accept-Version: 3
+          Accept: 'application/json'
+          connect_timeout: 10
+
+  App\Net\ApiRatesConnection:
+    arguments:
+      $config:
+        base_uri: 'https://api.exchangeratesapi.io/latest'
+        headers:
+          Accept: 'application/json'
+          connect_timeout: 10
+
+  App\Taxes\DataProvider\BinCountryDataProvider:
+    arguments:
+      $storage: '@bin_provider.key_value.storage'
+
+  App\Taxes\DataProvider\ExchangeRatesDataProvider:
+    arguments:
+      $storage: '@exchange_rates_provider.key_value.storage'
+

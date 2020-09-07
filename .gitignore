@@ -1,0 +1,6 @@
+/var/
+/vendor/
+.phpunit
+.phpunit.result.cache
+test_task.*
+.idea
