@@ -12,4 +12,10 @@ I think better solution is set up long term storage based a db, for bins  at lea
 1. Tax intercepors and task calculator have to process some batch of transactions; it should be fixed first imo.
 1. Resulted script: php app.php input.txt, so few words about code inside - i implement is such way cos no sense to create smth good without knowledge about how it will work futher.
 
+# integration
+I tried to use minimal dependencies. So i created simple Application class, its just a mock which help show results.
+So it might be put in trash in case of integration.
+That code would really easy integrates with Symfony (maybe Laravel too). 
+
+
 P.S. I really think 2-4 hours is not enough for this task
