@@ -11,3 +11,5 @@ I think it still not perfect code by the way and here some reasons:
 I think better solution is set up long term storage based a db, for bins  at least. And some storage like redis for currencies.
 1. Tax intercepors and task calculator have to process some batch of transactions; it should be fixed first imo.
 1. Resulted script: php app.php input.txt, so few words about code inside - i implement is such way cos no sense to create smth good without knowledge about how it will work futher.
+
+P.S. I really think 2-4 hours is not enough for this task
