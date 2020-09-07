@@ -13,13 +13,13 @@ I think better solution is set up long term storage based a db, for bins  at lea
 1. Resulted script: php app.php input.txt, so few words about code inside - i implement is such way cos no sense to create smth good without knowledge about how it will work futher.
 
 # integration
-I tried to use minimal dependencies. 
+I tried to use minimal count of dependencies.
 
 So i created simple Application class, its just a mock which help show results.
 So it might be put in trash in case of integration.
 
 
-That code would really easy integrates with Symfony (maybe Laravel too). 
+That code would really easy integrates with Symfony (maybe Laravel too) and any frameworks with solid dependency injection mechanics. 
 
 
 P.S. I really think 2-4 hours is not enough for this task
